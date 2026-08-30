@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BEV130 · Module 1 Online Learning · Welcome to the Beverage Business</title>
+<style>
+  :root{
+    --wine:#6E1E3A;
+    --wine-dark:#4E1329;
+    --gold:#D6B23A;
+    --cream:#FAF7F2;
+    --card:#FFFFFF;
+    --ink:#2B2321;
+    --muted:#6B6058;
+    --border:#E4DCD1;
+    --green:#276B43;
+    --green-bg:#EAF5EE;
+    --red:#A83329;
+    --red-bg:#FCEBE9;
+    --radius:14px;
+    --focus:#1B5FB8;
+  }
+  /* Colors above are tuned to meet WCAG 2.1 AA contrast (4.5:1) against their
+     typical backgrounds; see .sr-only/.skip-link and :focus-visible rules
+     below for the rest of the accessibility pass. */
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  .sr-only{
+    position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+    overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;
+  }
+  .skip-link{
+    position:absolute;left:-9999px;top:0;background:var(--wine-dark);color:#fff;
+    padding:10px 16px;z-index:200;border-radius:0 0 8px 0;font-size:13.5px;font-weight:700;
+  }
+  .skip-link:focus{left:0;top:0;}
+  :focus-visible{outline:3px solid var(--focus);outline-offset:2px;}
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible{
+    outline:3px solid var(--focus);outline-offset:2px;
+  }
+  .link-btn{
+    background:none;border:none;padding:0;color:var(--muted);text-decoration:underline;
+    cursor:pointer;font:inherit;font-style:italic;
+  }
+  button.flip{
+    background:none;border:none;padding:0;margin:0;font:inherit;text-align:inherit;
+    -webkit-appearance:none;appearance:none;color:inherit;
+  }
+  body{
+    background:var(--cream);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.55;
+    padding-bottom:60px;
+  }
+  h1,h2,h3,h4{
+    font-family:Georgia,"Times New Roman",serif;
+    color:var(--wine-dark);
+    margin-top:0;
+  }
+  a{color:var(--wine);}
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    background:linear-gradient(135deg,var(--wine) 0%,var(--wine-dark) 100%);
+    color:#fff;
+    padding:26px 24px 20px;
+  }
+  .topbar-inner{max-width:980px;margin:0 auto;}
+  .eyebrow{
+    text-transform:uppercase;
+    letter-spacing:.14em;
+    font-size:12px;
+    color:var(--gold);
+    font-weight:700;
+    margin-bottom:6px;
+  }
+  .topbar h1{color:#fff;font-size:28px;margin-bottom:4px;}
+  .topbar .sub{color:#EAD9E0;font-size:15px;font-style:italic;}
+  .badge-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;}
+  .badge{
+    background:rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.3);
+    padding:6px 12px;
+    border-radius:999px;
+    font-size:12.5px;
+    display:flex;align-items:center;gap:6px;
+  }
+  .badge b{color:var(--gold);}
+
+  /* progress bar */
+  .progress-wrap{max-width:980px;margin:16px auto 0;padding:0 24px;}
+  .progress-track{
+    background:rgba(255,255,255,.22);
+    border-radius:999px;
+    height:10px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    background:var(--gold);
+    height:100%;
+    width:0%;
+    transition:width .4s ease;
+  }
+  .progress-label{font-size:12px;color:#EAD9E0;margin-top:6px;}
+
+  /* ---------- Nav tabs ---------- */
+  .nav{
+    position:sticky;top:0;z-index:50;
+    background:#fff;
+    border-bottom:1px solid var(--border);
+    box-shadow:0 2px 8px rgba(0,0,0,.04);
+  }
+  .nav-inner{
+    max-width:980px;margin:0 auto;
+    display:flex;overflow-x:auto;
+    padding:0 12px;
+  }
+  .nav-btn{
+    background:none;border:none;
+    padding:14px 16px;
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--muted);
+    cursor:pointer;
+    white-space:nowrap;
+    border-bottom:3px solid transparent;
+    display:flex;align-items:center;gap:6px;
+  }
+  .nav-btn.active{color:var(--wine);border-bottom-color:var(--wine);}
+  .nav-check{
+    width:16px;height:16px;border-radius:50%;
+    background:var(--green);color:#fff;
+    font-size:10px;display:none;align-items:center;justify-content:center;
+  }
+  .nav-check.done{display:inline-flex;}
+
+  /* ---------- Layout ---------- */
+  .wrap{max-width:820px;margin:0 auto;padding:28px 20px 10px;}
+  .panel{display:none;animation:fade .35s ease;}
+  .panel.active{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+  .lesson-head{
+    display:flex;justify-content:space-between;align-items:flex-start;
+    gap:14px;flex-wrap:wrap;
+    margin-bottom:6px;
+  }
+  .time-chip{
+    background:var(--wine);color:#fff;font-size:12px;font-weight:700;
+    padding:5px 11px;border-radius:999px;white-space:nowrap;
+  }
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:22px 24px;
+    margin-bottom:18px;
+    box-shadow:0 1px 3px rgba(0,0,0,.03);
+  }
+  .hook{
+    font-family:Georgia,serif;
+    font-style:italic;
+    font-size:18px;
+    color:var(--wine-dark);
+    border-left:4px solid var(--gold);
+    padding:8px 0 8px 16px;
+    margin:6px 0 20px;
+  }
+  .keyconcept{
+    background:var(--green-bg);
+    border:1px solid #cfe6d7;
+    border-left:5px solid var(--green);
+    border-radius:10px;
+    padding:14px 18px;
+    margin:18px 0;
+  }
+  .keyconcept .lab{font-weight:700;color:var(--green);font-size:12px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin:16px 0;}
+
+  /* flip cards */
+  .flip{display:block;width:100%;perspective:1000px;height:170px;cursor:pointer;}
+  .flip-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+  .flip.flipped .flip-inner{transform:rotateY(180deg);}
+  .flip-face{
+    position:absolute;inset:0;backface-visibility:hidden;
+    border-radius:10px;border:1px solid var(--border);
+    display:flex;align-items:center;justify-content:center;
+    text-align:center;padding:10px;font-size:13.5px;
+    overflow-y:auto;
+  }
+  .flip-front{background:#fff;font-weight:700;color:var(--wine-dark);}
+  .flip-back{background:var(--wine);color:#fff;transform:rotateY(180deg);font-size:11px;line-height:1.35;padding:12px 10px;}
+  .flip-hint{font-size:10px;color:var(--muted);text-align:center;margin-top:-6px;margin-bottom:14px;}
+
+  /* sector sections (career pathways, follow the product) */
+  .sector-section{margin:20px 0;padding-top:14px;border-top:1px solid var(--border);}
+  .sector-section:first-child{margin-top:10px;padding-top:0;border-top:none;}
+  .sector-heading{
+    font-size:15px;font-weight:700;color:var(--wine-dark);margin:0 0 12px;
+    display:inline-block;background:var(--cream);border:1px solid var(--border);
+    border-radius:999px;padding:6px 14px;
+  }
+
+  /* sector sort */
+  .sort-item{
+    border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:10px;
+    background:#fff;transition:box-shadow .2s, border-color .2s;
+  }
+  .sort-item.correct{border-color:var(--green);background:var(--green-bg);}
+  .sort-item.shake{animation:shake .35s;}
+  @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+  .sort-text{font-size:14px;margin-bottom:8px;font-weight:600;}
+  .sort-btns{display:flex;gap:8px;flex-wrap:wrap;}
+  .sort-btn{
+    font-size:12px;padding:6px 11px;border-radius:8px;border:1px solid var(--border);
+    background:var(--cream);cursor:pointer;font-weight:600;color:var(--ink);
+  }
+  .sort-btn:hover{border-color:var(--wine);}
+  .sort-result{font-size:12px;margin-top:6px;font-weight:700;min-height:0;color:var(--red);}
+  .sort-item.correct .sort-result{color:var(--green);}
+  .sort-item.correct .sort-btns{display:none;}
+
+  /* chain builder */
+  .chain-slots{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 18px;}
+  .chain-slot{
+    flex:1 1 140px;min-height:52px;border:2px dashed var(--border);border-radius:10px;
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    font-size:12.5px;font-weight:700;color:var(--muted);padding:6px;background:#fff;
+  }
+  .chain-slot.filled{border-style:solid;border-color:var(--green);background:var(--green-bg);color:var(--green);}
+  .chain-slot .step-num{font-size:10px;display:block;color:var(--muted);margin-bottom:2px;font-weight:600;}
+  .chain-pool{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:8px;}
+  .chain-tile{
+    background:var(--wine);color:#fff;border:none;border-radius:10px;
+    padding:12px 16px;font-size:13.5px;font-weight:700;cursor:pointer;
+  }
+  .chain-tile:disabled{opacity:0;pointer-events:none;position:absolute;}
+  .chain-tile.wrong{animation:shake .35s;background:var(--red);}
+  .chain-status{font-size:13px;font-weight:600;color:var(--muted);margin-top:6px;}
+  .chain-success{
+    display:none;background:var(--green-bg);border:1px solid #cfe6d7;border-left:5px solid var(--green);
+    border-radius:10px;padding:14px 18px;margin-top:14px;font-size:14px;color:var(--wine-dark);
+  }
+  .chain-success.show{display:block;}
+
+  /* follow the product: reuses the chain-slot/chain-tile builder from Build
+     the Supply Chain (see .chain-* below), with a "long" modifier since each
+     step here is a full sentence rather than a one- or two-word label. */
+  .chain-tile.long{
+    white-space:normal;text-align:left;max-width:320px;line-height:1.35;font-weight:600;
+  }
+  .chain-slot.long{
+    flex-basis:220px;align-items:flex-start;text-align:left;padding:10px 12px;
+  }
+  .chain-slot.long .step-num{margin-bottom:3px;}
+  .product-instance{margin-bottom:10px;}
+
+  /* quiz */
+  .quiz{border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin:14px 0;background:#fffdfa;}
+  .quiz-fieldset{border:none;margin:0;padding:0;min-width:0;}
+  .quiz-q{font-weight:700;margin-bottom:10px;font-size:14.5px;color:var(--wine-dark);padding:0;width:100%;white-space:normal;}
+  .quiz-opt{display:block;margin-bottom:8px;font-size:13.5px;cursor:pointer;padding:6px 8px;border-radius:6px;}
+  .quiz-opt:hover{background:#f3ece7;}
+  .quiz-opt input{margin-right:8px;}
+  .quiz-btn{
+    background:var(--wine);color:#fff;border:none;border-radius:8px;padding:8px 16px;
+    font-size:13px;font-weight:700;cursor:pointer;margin-top:4px;
+  }
+  .quiz-btn:hover{background:var(--wine-dark);}
+  .quiz-btn.is-locked,.quiz-btn.is-locked:hover{
+    background:var(--muted);cursor:not-allowed;
+  }
+  .quiz-feedback{margin-top:10px;padding:10px 12px;border-radius:8px;font-size:13px;display:none;}
+  .quiz-feedback.correct{display:block;background:var(--green-bg);color:var(--green);border:1px solid #cfe6d7;}
+  .quiz-feedback.incorrect{display:block;background:var(--red-bg);color:var(--red);border:1px solid #f2cdc9;}
+
+  .completion-msg{margin-top:10px;font-size:13px;font-weight:600;padding:10px 12px;border-radius:8px;display:none;}
+  .completion-msg.show{display:block;}
+  .completion-msg.locked{background:var(--red-bg);color:var(--red);border:1px solid #f2cdc9;}
+
+  textarea.journal{
+    width:100%;min-height:90px;border:1px solid var(--border);border-radius:8px;
+    padding:10px;font-family:inherit;font-size:13.5px;resize:vertical;
+  }
+  .journal-note{font-size:11.5px;color:var(--muted);margin-top:6px;font-style:italic;}
+  .journal-hint{font-size:11.5px;color:var(--muted);margin-bottom:6px;}
+
+  .btn-row{display:flex;justify-content:space-between;align-items:center;margin-top:22px;flex-wrap:wrap;gap:10px;}
+  .complete-btn{
+    background:var(--wine);color:#fff;border:none;border-radius:999px;
+    padding:11px 22px;font-size:14px;font-weight:700;cursor:pointer;
+  }
+  .complete-btn.done{background:var(--green);}
+  .next-btn{
+    background:none;border:1px solid var(--wine);color:var(--wine);border-radius:999px;
+    padding:11px 20px;font-size:13.5px;font-weight:700;cursor:pointer;
+  }
+
+  ul.tidy li{margin-bottom:6px;font-size:14.5px;}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  @media(max-width:640px){.two-col{grid-template-columns:1fr;}}
+
+  .assign-card h4{margin-bottom:4px;}
+  .assign-meta{font-size:12.5px;color:var(--muted);margin-bottom:10px;}
+  .pill{display:inline-block;background:var(--cream);border:1px solid var(--border);border-radius:999px;padding:3px 10px;font-size:11.5px;margin:2px 4px 2px 0;font-weight:600;}
+
+  footer{max-width:820px;margin:30px auto 0;padding:0 20px;font-size:12px;color:var(--muted);text-align:center;}
+</style>
+</head>
+<body>
+
+<a href="#mainContent" class="skip-link">Skip to main content</a>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="eyebrow">BEV130 &middot; Module 1 &middot; Online Learning Component</div>
+    <h1>Welcome to the Beverage Business</h1>
+    <div class="sub">Understanding the Beverage Industry Ecosystem</div>
+    <div class="badge-row">
+      <div class="badge"><span aria-hidden="true">⏱</span> Estimated time: <b>&nbsp;~2 hrs 45 min</b></div>
+      <div class="badge"><span aria-hidden="true">🕐</span> Time on this page: <b id="liveTimer">0:00</b></div>
+      <div class="badge"><span aria-hidden="true">✅</span> Lessons complete: <b id="lessonsDoneLabel">0 / 4</b></div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-track" role="progressbar" aria-label="Lessons complete" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0" id="progressTrack"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-label">Work through each tab left to right — you can leave and come back within this session.</div>
+    </div>
+  </div>
+</div>
+
+<div class="nav">
+  <div class="nav-inner" id="navInner" role="tablist" aria-label="Module 1 sections">
+    <button class="nav-btn active" data-panel="intro" role="tab" id="tab-intro" aria-selected="true" aria-controls="panel-intro">Start Here</button>
+    <button class="nav-btn" data-panel="l1" role="tab" id="tab-l1" aria-selected="false" aria-controls="panel-l1">Lesson 1 <span class="nav-check" id="check-l1" aria-hidden="true">✓</span><span class="sr-only" id="check-l1-sr"></span></button>
+    <button class="nav-btn" data-panel="l2" role="tab" id="tab-l2" aria-selected="false" aria-controls="panel-l2">Lesson 2 <span class="nav-check" id="check-l2" aria-hidden="true">✓</span><span class="sr-only" id="check-l2-sr"></span></button>
+    <button class="nav-btn" data-panel="l3" role="tab" id="tab-l3" aria-selected="false" aria-controls="panel-l3">Lesson 3 <span class="nav-check" id="check-l3" aria-hidden="true">✓</span><span class="sr-only" id="check-l3-sr"></span></button>
+    <button class="nav-btn" data-panel="l4" role="tab" id="tab-l4" aria-selected="false" aria-controls="panel-l4">Lesson 4 <span class="nav-check" id="check-l4" aria-hidden="true">✓</span><span class="sr-only" id="check-l4-sr"></span></button>
+    <button class="nav-btn" data-panel="wrap" role="tab" id="tab-wrap" aria-selected="false" aria-controls="panel-wrap">Wrap-Up &amp; What's Next</button>
+  </div>
+</div>
+
+<div class="wrap" id="mainContent">
+
+  <!-- ============ INTRO ============ -->
+  <div class="panel active" id="panel-intro" role="tabpanel" aria-labelledby="tab-intro">
+    <div class="card">
+      <p class="hook">Every beverage has a story.</p>
+      <p>Whether it's a bottle of wine enjoyed at a restaurant, a craft beer picked up at a local store, a spirit poured into a cocktail, or a ready-to-drink can grabbed from a cooler, each product traveled through a network of businesses and professionals before it ever reached you.</p>
+      <p>The beverage industry is a dynamic ecosystem spanning agriculture, manufacturing, distribution, retail, hospitality, marketing, logistics, and entrepreneurship. Producers transform raw materials into products. Distributors move those products through the marketplace. Retailers and hospitality businesses create the consumer experience. In this module you'll explore how those pieces fit together — and where you might fit into the picture.</p>
+      <div class="keyconcept">
+        <div class="lab">By the end of this online session, you'll be able to</div>
+        <ul class="tidy" style="margin-bottom:0;">
+          <li>Define the major sectors of the beverage industry</li>
+          <li>Explain the role of production, distribution, and retail/hospitality</li>
+          <li>Identify career opportunities throughout the beverage supply chain</li>
+          <li>Describe how products move from producer to consumer</li>
+          <li>Analyze the relationship between industry stakeholders</li>
+        </ul>
+      </div>
+      <p>This page has 4 short lessons, each with a quick activity and a knowledge check, plus your Discussion Board and Major Assignment instructions at the end. Use the tabs above (or the button below) to move through it at your own pace.</p>
+      <div class="keyconcept" style="margin-bottom:0;">
+        <div class="lab">Before you start</div>
+        Click the <b>"Mark Lesson [#] Complete"</b> button at the bottom of each lesson once you finish it. This is required — your completion code at the end of the module can only be generated once all 4 lessons are marked complete.
+      </div>
+    </div>
+    <div class="btn-row">
+      <span></span>
+      <button class="next-btn" onclick="goTo('l1')">Begin Lesson 1 →</button>
+    </div>
+  </div>
+
+  <!-- ============ LESSON 1 ============ -->
+  <div class="panel" id="panel-l1" role="tabpanel" aria-labelledby="tab-l1">
+    <div class="lesson-head">
+      <h2>Lesson 1 &middot; The Beverage Industry at a Glance</h2>
+      <span class="time-chip">≈ 35 min</span>
+    </div>
+
+    <div class="card">
+      <h3>What is the beverage industry?</h3>
+      <p>The beverage industry includes every business involved in <b>producing, distributing, marketing, and selling</b> beverages — from the farmer growing grapes to the bartender pouring the glass.</p>
+      <p><b>Tap each card below</b> to reveal what makes that category part of the industry.</p>
+      <div class="grid" id="categoryGrid"></div>
+      <div class="keyconcept">
+        <div class="lab">Key Concept</div>
+        The beverage industry is not one business. It is an interconnected system of businesses that depend on one another to reach consumers.
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Quick Activity: Sort the Business</h3>
+      <p>Each example below belongs to one part of the industry. Click the sector you think is correct — you'll get instant feedback, and you can try again if you miss one.</p>
+      <div id="sortList"></div>
+    </div>
+
+    <div class="card">
+      <h3>Knowledge Check</h3>
+      <div class="quiz" data-answer="B">
+        <fieldset class="quiz-fieldset">
+          <legend class="quiz-q">1. Which statement best describes the beverage industry?</legend>
+        <label class="quiz-opt"><input type="radio" name="q1" value="A"> It consists only of breweries, wineries, and distilleries.</label>
+        <label class="quiz-opt"><input type="radio" name="q1" value="B"> It includes businesses involved in producing, distributing, marketing, and selling beverages.</label>
+        <label class="quiz-opt"><input type="radio" name="q1" value="C"> It consists primarily of restaurants and bars.</label>
+        <label class="quiz-opt"><input type="radio" name="q1" value="D"> It is limited to alcoholic beverages.</label>
+        </fieldset>
+        <button class="quiz-btn" onclick="checkQuiz(this)">Check Answer</button>
+        <div class="quiz-feedback" aria-live="polite" role="status"></div>
+      </div>
+      <div class="quiz" data-answer="D">
+        <fieldset class="quiz-fieldset">
+          <legend class="quiz-q">2. Which of the following is considered part of the beverage industry?</legend>
+        <label class="quiz-opt"><input type="radio" name="q2" value="A"> Coffee</label>
+        <label class="quiz-opt"><input type="radio" name="q2" value="B"> Wine</label>
+        <label class="quiz-opt"><input type="radio" name="q2" value="C"> Bottled Water</label>
+        <label class="quiz-opt"><input type="radio" name="q2" value="D"> All of the Above</label>
+        </fieldset>
+        <button class="quiz-btn" onclick="checkQuiz(this)">Check Answer</button>
+        <div class="quiz-feedback" aria-live="polite" role="status"></div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="complete-btn" id="btn-complete-l1" onclick="markComplete('l1')">Mark Lesson 1 Complete</button>
+      <button class="next-btn" onclick="goTo('l2')">Next: Lesson 2 →</button>
+    </div>
+  </div>
+
+  <!-- ============ LESSON 2 ============ -->
+  <div class="panel" id="panel-l2" role="tabpanel" aria-labelledby="tab-l2">
+    <div class="lesson-head">
+      <h2>Lesson 2 &middot; Career and Business Pathways</h2>
+      <span class="time-chip">≈ 40 min</span>
+    </div>
+
+    <div class="card">
+      <p class="hook">You don't have to be a brewer, winemaker, or bartender to build a career in this industry.</p>
+      <p>The beverage world runs on three major sectors. Each one is listed below — flip each card to see example roles and what they actually do day to day.</p>
+      <div id="careerSections"></div>
+    </div>
+
+    <div class="card">
+      <h3>Reflection: Your Journal</h3>
+      <label for="journal-l2" style="display:block;font-weight:700;margin-bottom:8px;">Which sector interests you most, and why?</label>
+      <div class="journal-hint" id="journal-l2-hint">Press Tab when you're finished typing to move to the next item on the page.</div>
+      <textarea class="journal" id="journal-l2" rows="4" placeholder="Type a few sentences here..." aria-describedby="journal-l2-hint"></textarea>
+      <div class="journal-note">This box is scratch space for your own thinking — it isn't submitted anywhere. Copy anything you want to keep into your notes or your course journal.</div>
+    </div>
+
+    <div class="card">
+      <h3>Knowledge Check</h3>
+      <div class="quiz" data-answer="C">
+        <fieldset class="quiz-fieldset">
+          <legend class="quiz-q">3. A Beverage Director most commonly works in which sector?</legend>
+        <label class="quiz-opt"><input type="radio" name="q3" value="A"> Production</label>
+        <label class="quiz-opt"><input type="radio" name="q3" value="B"> Distribution</label>
+        <label class="quiz-opt"><input type="radio" name="q3" value="C"> Retail/Hospitality</label>
+        <label class="quiz-opt"><input type="radio" name="q3" value="D"> Agriculture</label>
+        </fieldset>
+        <button class="quiz-btn" onclick="checkQuiz(this)">Check Answer</button>
+        <div class="quiz-feedback" aria-live="polite" role="status"></div>
+      </div>
+      <div class="quiz" data-answer="B">
+        <fieldset class="quiz-fieldset">
+          <legend class="quiz-q">4. Which career would most likely be involved in manufacturing beverages?</legend>
+        <label class="quiz-opt"><input type="radio" name="q4" value="A"> Distributor Sales Representative</label>
+        <label class="quiz-opt"><input type="radio" name="q4" value="B"> Distiller</label>
+        <label class="quiz-opt"><input type="radio" name="q4" value="C"> Restaurant Manager</label>
+        <label class="quiz-opt"><input type="radio" name="q4" value="D"> Beverage Buyer</label>
+        </fieldset>
+        <button class="quiz-btn" onclick="checkQuiz(this)">Check Answer</button>
+        <div class="quiz-feedback" aria-live="polite" role="status"></div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="complete-btn" id="btn-complete-l2" onclick="markComplete('l2')">Mark Lesson 2 Complete</button>
+      <button class="next-btn" onclick="goTo('l3')">Next: Lesson 3 →</button>
+    </div>
+  </div>
+
+  <!-- ============ LESSON 3 ============ -->
+  <div class="panel" id="panel-l3" role="tabpanel" aria-labelledby="tab-l3">
+    <div class="lesson-head">
+      <h2>Lesson 3 &middot; How a Beverage Gets to Market</h2>
+      <span class="time-chip">≈ 55 min</span>
+    </div>
+
+    <div class="card">
+      <h3>Build the Supply Chain</h3>
+      <p>The journey of a beverage can be viewed as a supply chain. Click the tiles below <b>in the correct order</b> to build the chain from raw material to consumer. A correct tile locks into place; an incorrect one will shake — just try the next one.</p>
+      <div class="chain-slots" id="chainSlots"></div>
+      <div class="chain-pool" id="chainPool"></div>
+      <div class="chain-status" id="chainStatus" aria-live="polite" role="status">0 of 6 placed correctly.</div>
+      <div class="chain-success" id="chainSuccess" aria-live="polite" role="status"><span aria-hidden="true">🎉</span> <b>Nice work!</b> That's the full chain: Raw Materials → Production → Packaging → Distribution → Retail &amp; Hospitality → Consumer Experience. Every one of those steps depends on the one before it — remove any link and the beverage doesn't reach the glass.</div>
+    </div>
+
+    <div class="card">
+      <h3>Follow the Product</h3>
+      <p>This mirrors the "Follow the Bottle" exercise from class. Each category below has its own real-world journey — click its steps <b>in the correct order</b> to build it out, one category at a time. A correct step locks into place; an incorrect one will shake — just try the next one.</p>
+      <div id="productSections"></div>
+    </div>
+
+    <div class="card">
+      <h3>Knowledge Check</h3>
+      <div class="quiz" data-answer="C">
+        <fieldset class="quiz-fieldset">
+          <legend class="quiz-q">5. What is the primary function of distributors?</legend>
+        <label class="quiz-opt"><input type="radio" name="q5" value="A"> Manufacturing beverages</label>
+        <label class="quiz-opt"><input type="radio" name="q5" value="B"> Selling directly to farms</label>
+        <label class="quiz-opt"><input type="radio" name="q5" value="C"> Moving products from producers to retailers and hospitality businesses</label>
+        <label class="quiz-opt"><input type="radio" name="q5" value="D"> Regulating beverage production</label>
+        </fieldset>
+        <button class="quiz-btn" onclick="checkQuiz(this)">Check Answer</button>
+        <div class="quiz-feedback" aria-live="polite" role="status"></div>
+      </div>
+      <div class="quiz" data-answer="True">
+        <fieldset class="quiz-fieldset">
+          <legend class="quiz-q">6. True or False: Without distribution and retail channels, most beverage producers would have difficulty reaching consumers.</legend>
+        <label class="quiz-opt"><input type="radio" name="q6" value="True"> True</label>
+        <label class="quiz-opt"><input type="radio" name="q6" value="False"> False</label>
+        </fieldset>
+        <button class="quiz-btn" onclick="checkQuiz(this)">Check Answer</button>
+        <div class="quiz-feedback" aria-live="polite" role="status"></div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="complete-btn" id="btn-complete-l3" onclick="markComplete('l3')">Mark Lesson 3 Complete</button>
+      <button class="next-btn" onclick="goTo('l4')">Next: Lesson 4 →</button>
+    </div>
+  </div>
+
+  <!-- ============ LESSON 4 ============ -->
+  <div class="panel" id="panel-l4" role="tabpanel" aria-labelledby="tab-l4">
+    <div class="lesson-head">
+      <h2>Lesson 4 &middot; Industry Trends and Opportunities</h2>
+      <span class="time-chip">≈ 30 min</span>
+    </div>
+
+    <div class="card">
+      <p>The beverage business never sits still. Flip each card to see a trend that's currently reshaping the industry.</p>
+      <div class="grid" id="trendGrid"></div>
+    </div>
+
+    <div class="card">
+      <h3>Quick Check</h3>
+      <div class="quiz" data-answer="B">
+        <fieldset class="quiz-fieldset">
+          <legend class="quiz-q">7. Which of the following was <u>not</u> discussed in this lesson as a current industry trend?</legend>
+        <label class="quiz-opt"><input type="radio" name="q7" value="A"> Premiumization</label>
+        <label class="quiz-opt"><input type="radio" name="q7" value="B"> Nationwide beverage price fixing</label>
+        <label class="quiz-opt"><input type="radio" name="q7" value="C"> Growth in non-alcoholic options</label>
+        <label class="quiz-opt"><input type="radio" name="q7" value="D"> Sustainability</label>
+        </fieldset>
+        <button class="quiz-btn" onclick="checkQuiz(this)">Check Answer</button>
+        <div class="quiz-feedback" aria-live="polite" role="status"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Reflection Discussion Board (Warm-Up)</h3>
+      <label for="journal-l4" style="display:block;font-weight:700;margin-bottom:8px;">Draft your "Introduce Yourself to the Beverage Industry" post</label>
+      <p style="margin-top:0;margin-bottom:10px;font-size:13.5px;">This is the same post you'll submit to the Module 1 Discussion Board in Canvas (250&ndash;300 words), so draft it here first. Cover all four:</p>
+      <ul class="tidy" style="margin-top:0;margin-bottom:10px;">
+        <li>Your current experience with the beverage industry</li>
+        <li>A beverage company or brand you admire</li>
+        <li>A career path within the industry that interests you</li>
+        <li>What you hope to learn in this course</li>
+      </ul>
+      <div class="journal-hint" id="journal-l4-hint">Press Tab when you're finished typing to move to the next item on the page.</div>
+      <textarea class="journal" id="journal-l4" rows="6" placeholder="Draft your post here, covering all four points above..." aria-describedby="journal-l4-hint"></textarea>
+      <div class="journal-note">This box is a draft space — it isn't submitted from here. Copy your finished post into the Module 1 Discussion Board in Canvas (see the Wrap-Up tab).</div>
+    </div>
+
+    <div class="btn-row">
+      <button class="complete-btn" id="btn-complete-l4" onclick="markComplete('l4')">Mark Lesson 4 Complete</button>
+      <button class="next-btn" onclick="goTo('wrap')">Next: Wrap-Up &amp; What's Next →</button>
+    </div>
+  </div>
+
+  <!-- ============ WRAP UP ============ -->
+  <div class="panel" id="panel-wrap" role="tabpanel" aria-labelledby="tab-wrap">
+    <div class="card">
+      <h2>Module Summary</h2>
+      <p>The beverage industry is a complex ecosystem composed of production, distribution, and retail/hospitality sectors. Each plays a critical role in moving products from raw materials to consumers. Understanding these relationships provides the foundation for future study of beverage production, sales, service, marketing, and entrepreneurship.</p>
+      <h4>Key Takeaways</h4>
+      <ul class="tidy">
+        <li>The beverage industry is an interconnected ecosystem, not a single business.</li>
+        <li>Production, distribution, and retail/hospitality form the foundation of the industry.</li>
+        <li>Many career paths exist beyond brewing, winemaking, and bartending.</li>
+        <li>Understanding the supply chain explains how products actually reach consumers.</li>
+        <li>Every organization in the industry contributes to the customer experience.</li>
+      </ul>
+      <div class="keyconcept">
+        <div class="lab">Final Assessment Question</div>
+        <label for="journal-final">In your own words, explain how a bottle moves from producer to consumer and identify at least three careers involved in that journey.</label>
+        <div class="journal-hint" id="journal-final-hint">Press Tab when you're finished typing to move to the next item on the page.</div>
+        <textarea class="journal" id="journal-final" rows="4" style="margin-top:10px;" placeholder="Type your answer here — submit per your instructor's assignment link in Canvas." aria-describedby="journal-final-hint"></textarea>
+      </div>
+    </div>
+
+    <div class="card" id="completionCard">
+      <h3><span aria-hidden="true">🔑</span> Your Completion Code</h3>
+      <p>Once you've completed all 4 lessons, enter your name and generate your completion code. Paste that code into the <b>"Module 1 Online Tutorial – Completion Code"</b> text-entry assignment in Canvas so your instructor can record credit for working through this tutorial.</p>
+      <label for="studentName" style="font-weight:700;font-size:13.5px;display:block;margin-bottom:6px;">Your full name</label>
+      <input type="text" id="studentName" placeholder="Type your name as it appears in Canvas" style="width:100%;max-width:360px;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:13.5px;font-family:inherit;margin-bottom:12px;">
+      <div id="completionStatus" style="font-size:13px;color:var(--muted);font-weight:600;margin-bottom:12px;">Lessons complete: <span id="completionLessonCount">0 / 4</span></div>
+      <button class="quiz-btn" id="generateCodeBtn" onclick="generateCode()" aria-describedby="completionStatus completionMessage">Generate My Completion Code</button>
+      <div id="completionMessage" class="completion-msg" aria-live="polite" role="status"></div>
+      <div id="codeDisplay" style="display:none;margin-top:14px;">
+        <div class="keyconcept" style="margin:0;">
+          <div class="lab">Your Completion Code</div>
+          <div id="codeValue" style="font-family:'Courier New',monospace;font-size:20px;font-weight:700;letter-spacing:.05em;color:var(--wine-dark);margin:4px 0 10px;"></div>
+          <button class="quiz-btn" onclick="copyCode()">Copy Code</button>
+          <span id="copyConfirm" style="display:none;margin-left:10px;font-size:12.5px;color:var(--green);font-weight:700;">Copied!</span>
+        </div>
+      </div>
+      <p style="font-size:11.5px;color:var(--muted);margin-top:14px;margin-bottom:0;font-style:italic;">Working on a shared or public computer? Progress on this page is saved only in this browser. <button type="button" class="link-btn" onclick="resetProgress()" style="font-size:inherit;">Reset my progress on this device</button></p>
+    </div>
+
+    <h2 style="margin:26px 0 4px;">Complete the Next Two Activities in Canvas</h2>
+    <p style="margin-top:0;margin-bottom:14px;color:var(--muted);font-size:13.5px;">Paste your completion code into Canvas, then finish these two graded activities there — they aren't submitted from this page.</p>
+
+    <div class="card">
+      <h3><span aria-hidden="true">📌</span> Your Graded Discussion Post</h3>
+      <p><b>Introduce Yourself to the Beverage Industry</b></p>
+      <div class="assign-meta">Initial post: 250–300 words &nbsp;|&nbsp; Reply to 2 classmates: 100 words minimum each</div>
+      <p>In your initial post, discuss:</p>
+      <ul class="tidy">
+        <li>Your current experience with the beverage industry</li>
+        <li>A beverage company or brand you admire</li>
+        <li>A career path within the industry that interests you</li>
+        <li>What you hope to learn in this course</li>
+      </ul>
+      <p style="margin-bottom:0;">Post your response to the Module 1 Discussion Board in Canvas, then reply thoughtfully to at least two classmates.</p>
+    </div>
+
+    <div class="card">
+      <h3><span aria-hidden="true">📎</span> Major Assignment: Beverage Supply Chain Investigation</h3>
+      <p><b>Objective:</b> Investigate the complete journey of a beverage product from producer to consumer.</p>
+      <p><b>Instructions:</b> Select one beverage product and analyze its supply chain. Examples: Jack Daniel's, Coca-Cola, Starbucks Cold Brew, Red Bull, Modelo, Fiji Water, Kendall-Jackson Chardonnay — or a product of your own choosing.</p>
+      <div class="two-col">
+        <div>
+          <h4 style="font-size:14px;">Address these parts:</h4>
+          <ul class="tidy">
+            <li>Product Overview — name, category, company</li>
+            <li>Production — raw materials, location(s), process</li>
+            <li>Distribution — how it reaches market, partners</li>
+            <li>Retail &amp; Hospitality — sales channels, customer segments</li>
+            <li>Career Opportunities — one role each in production, distribution, retail/hospitality (responsibilities, skills, researched salary range)</li>
+            <li>Supply Chain Challenges — transportation, weather, regulation, labor, packaging shortages</li>
+          </ul>
+        </div>
+        <div>
+          <h4 style="font-size:14px;">Choose your deliverable:</h4>
+          <span class="pill">3–4 page paper</span>
+          <span class="pill">8–10 slide presentation</span>
+          <span class="pill">Professional infographic</span>
+          <p style="margin-top:12px;font-size:13px;color:var(--muted);">Check Canvas for the assignment submission link and due date.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="text-align:center;">
+      <h3 style="margin-bottom:6px;">Session Summary</h3>
+      <p style="color:var(--muted);font-size:13.5px;">Lessons completed: <b id="wrapDoneLabel">0 / 4</b> &nbsp;&middot;&nbsp; Time on this page: <b id="wrapTimer">0:00</b></p>
+      <p style="font-size:13px;color:var(--muted);">When you've completed all four lessons and drafted your discussion post, you're done with Module 1's online component — see you in class for Module 2!</p>
+    </div>
+  </div>
+
+</div>
+
+<footer>BEV130 &middot; Module 1 &middot; Welcome to the Beverage Business &mdash; Online Learning Component</footer>
+
+<script>
+// ---------------- Navigation ----------------
+const panels = ['intro','l1','l2','l3','l4','wrap'];
+function goTo(id){
+  panels.forEach(p=>{
+    document.getElementById('panel-'+p).classList.toggle('active', p===id);
+  });
+  document.querySelectorAll('.nav-btn').forEach(b=>{
+    const isActive = b.dataset.panel===id;
+    b.classList.toggle('active', isActive);
+    b.setAttribute('aria-selected', isActive ? 'true' : 'false');
+  });
+  const heading = document.querySelector('#panel-'+id+' h1, #panel-'+id+' h2');
+  if(heading){ heading.setAttribute('tabindex','-1'); heading.focus({preventScroll:true}); }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('.nav-btn').forEach(b=>{
+  b.addEventListener('click', ()=>goTo(b.dataset.panel));
+});
+
+// ---------------- Live timer ----------------
+let seconds = 0;
+setInterval(()=>{
+  seconds++;
+  const m = Math.floor(seconds/60), s = seconds%60;
+  const label = m+':'+String(s).padStart(2,'0');
+  document.getElementById('liveTimer').textContent = label;
+  document.getElementById('wrapTimer').textContent = label;
+}, 1000);
+
+// ---------------- Persistence (localStorage) ----------------
+// Bumped from v1 -> v2: earlier test/review passes on this page (answering
+// quizzes, typing placeholder text like "blah" into the reflection boxes,
+// generating a completion code) get saved under this key in whichever
+// browser did the testing. If a later revision of the file is opened in
+// that same browser/origin, restoreUI() below would otherwise silently
+// rehydrate that old test data and make the page look pre-filled out of the
+// box. Changing the key name means this revision always starts from a
+// genuinely clean state, regardless of what was saved under the old key.
+const STORAGE_KEY = 'bev130_module1_progress_v2';
+const state = {
+  doneState: {l1:false,l2:false,l3:false,l4:false},
+  quizAnswers: {},
+  journals: {},
+  studentName: '',
+  completionCode: ''
+};
+
+function saveState(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }catch(e){ /* localStorage unavailable (private browsing, etc.) — progress just won't persist */ }
+}
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return;
+    const saved = JSON.parse(raw);
+    if(saved.doneState) Object.assign(state.doneState, saved.doneState);
+    if(saved.quizAnswers) Object.assign(state.quizAnswers, saved.quizAnswers);
+    if(saved.journals) Object.assign(state.journals, saved.journals);
+    if(saved.studentName) state.studentName = saved.studentName;
+    if(saved.completionCode) state.completionCode = saved.completionCode;
+  }catch(e){ /* ignore corrupt/unreadable saved state and start fresh */ }
+}
+
+// ---------------- Lesson completion / progress ----------------
+function markComplete(id){
+  state.doneState[id] = true;
+  document.getElementById('btn-complete-'+id).textContent = '✓ Lesson Complete';
+  document.getElementById('btn-complete-'+id).classList.add('done');
+  document.getElementById('check-'+id).classList.add('done');
+  const srCheck = document.getElementById('check-'+id+'-sr');
+  if(srCheck) srCheck.textContent = ' — completed';
+  const doneCount = Object.values(state.doneState).filter(Boolean).length;
+  document.getElementById('lessonsDoneLabel').textContent = doneCount+' / 4';
+  document.getElementById('wrapDoneLabel').textContent = doneCount+' / 4';
+  document.getElementById('progressFill').style.width = (doneCount/4*100)+'%';
+  const track = document.getElementById('progressTrack');
+  if(track) track.setAttribute('aria-valuenow', String(doneCount));
+  updateCompletionUI();
+  saveState();
+}
+
+// ---------------- Shared: accessible flip-card builder ----------------
+// Flip cards are real <button> elements (keyboard-focusable and operable
+// with Enter/Space by default) with aria-pressed reflecting flip state.
+// Both the front and back text remain in the DOM at all times, so screen
+// reader users get the full content regardless of the visual flip state.
+function makeFlipCard(name, fact){
+  const wrap = document.createElement('div');
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'flip';
+  btn.setAttribute('aria-pressed','false');
+  const inner = document.createElement('div');
+  inner.className = 'flip-inner';
+  const front = document.createElement('div');
+  front.className = 'flip-face flip-front';
+  front.textContent = name;
+  const back = document.createElement('div');
+  back.className = 'flip-face flip-back';
+  back.textContent = fact;
+  inner.appendChild(front);
+  inner.appendChild(back);
+  btn.appendChild(inner);
+  btn.addEventListener('click', function(){
+    this.classList.toggle('flipped');
+    this.setAttribute('aria-pressed', this.classList.contains('flipped') ? 'true' : 'false');
+  });
+  const hint = document.createElement('div');
+  hint.className = 'flip-hint';
+  hint.textContent = 'tap to flip';
+  wrap.appendChild(btn);
+  wrap.appendChild(hint);
+  return wrap;
+}
+
+// ---------------- Lesson 1: category flip cards ----------------
+const categories = [
+  ["Beer","Fermented from grain and hops — one of the most widely produced beverage categories worldwide."],
+  ["Wine","Made from fermented grapes (or other fruit); production ranges from small family wineries to global brands."],
+  ["Spirits","Distilled beverages like whiskey, vodka, and rum — a category built on both heritage brands and small craft distillers."],
+  ["RTDs","'Ready-to-drink' canned cocktails, hard seltzers, and bottled coffee — built for convenience."],
+  ["Soft Drinks","Non-alcoholic carbonated and still beverages sold through nearly every retail and foodservice channel."],
+  ["Coffee","Grown on farms worldwide, then roasted and sold through cafés, retail, and foodservice."],
+  ["Tea","One of the most consumed beverages globally, sold both ready-to-drink and for home brewing."],
+  ["Energy Drinks","A fast-growing category built around functional ingredients and bold marketing."],
+  ["Functional Beverages","Drinks formulated around a specific benefit — hydration, focus, gut health, and more."],
+  ["Bottled Water","A high-volume category ranging from spring water to enhanced/flavored waters."]
+];
+const catGrid = document.getElementById('categoryGrid');
+categories.forEach(([name,fact])=>{
+  catGrid.appendChild(makeFlipCard(name, fact));
+});
+
+// ---------------- Lesson 1: sector sort ----------------
+const sortItems = [
+  {text:"A local vineyard tending grapevines", answer:"Production"},
+  {text:"A craft brewery's bottling line", answer:"Production"},
+  {text:"A regional beverage distributor's warehouse", answer:"Distribution"},
+  {text:"A sales rep calling on bars and restaurants", answer:"Distribution"},
+  {text:"A grocery store's wine aisle", answer:"Retail/Hospitality"},
+  {text:"A restaurant curating its wine list", answer:"Retail/Hospitality"}
+];
+const sortList = document.getElementById('sortList');
+sortItems.forEach((item,i)=>{
+  const div = document.createElement('div');
+  div.className='sort-item';
+  div.innerHTML = `<div class="sort-text" id="sort-text-${i}">${item.text}</div>
+    <div class="sort-btns" role="group" aria-labelledby="sort-text-${i}">
+      <button type="button" class="sort-btn" data-v="Production">Production</button>
+      <button type="button" class="sort-btn" data-v="Distribution">Distribution</button>
+      <button type="button" class="sort-btn" data-v="Retail/Hospitality">Retail/Hospitality</button>
+    </div>
+    <div class="sort-result" aria-live="polite" role="status"></div>`;
+  const resultEl = div.querySelector('.sort-result');
+  resultEl.setAttribute('tabindex','-1');
+  div.querySelectorAll('.sort-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      if(btn.dataset.v === item.answer){
+        div.classList.add('correct');
+        resultEl.textContent = '✓ Correct — '+item.answer;
+        // The buttons are about to be hidden (.sort-item.correct .sort-btns
+        // {display:none}) and this button currently has focus. Move focus to
+        // the result message BEFORE that happens so it lands somewhere
+        // meaningful instead of being lost to <body>, and so the message is
+        // reliably announced.
+        resultEl.focus();
+      } else {
+        div.classList.add('shake');
+        // Clear and re-set the text (rather than assigning it directly) so
+        // that clicking the same wrong answer twice in a row still produces
+        // a change screen readers will announce — many won't re-announce an
+        // aria-live region whose text content didn't actually change.
+        resultEl.textContent = '';
+        window.requestAnimationFrame(()=>{
+          resultEl.textContent = 'Not quite — try another sector.';
+        });
+        setTimeout(()=>div.classList.remove('shake'),350);
+      }
+    });
+  });
+  sortList.appendChild(div);
+});
+
+// ---------------- Lesson 2: career pathways ----------------
+const careers = {
+  "Production": [
+    ["Brewer","Manages the brewing process from mash to fermentation to packaging."],
+    ["Winemaker","Oversees crush, fermentation, aging, and blending decisions."],
+    ["Distiller","Runs distillation and barrel-aging for spirits production."],
+    ["Production Supervisor","Keeps the manufacturing floor running safely and on schedule."],
+    ["QA Technician","Tests products at every stage to ensure consistency and safety."],
+    ["Packaging Specialist","Manages bottling, canning, kegging, and labeling lines."]
+  ],
+  "Distribution": [
+    ["Sales Representative","Builds relationships with retail and hospitality accounts."],
+    ["Account Manager","Manages ongoing relationships with key distributor accounts."],
+    ["Brand Manager","Manages relationship between supplier and distributor."],
+    ["Logistics Coordinator","Plans routes and schedules to keep product moving efficiently."],
+    ["Warehouse Manager","Oversees inventory, storage, and order fulfillment."],
+    ["Driver","Delivers product directly to accounts."]
+  ],
+  "Retail/Hospitality": [
+    ["Beverage Director","Builds and manages a venue's full beverage program."],
+    ["Restaurant Manager","Oversees day-to-day operations, including beverage service."],
+    ["Bartender","Prepares and serves drinks directly to guests."],
+    ["Sommelier","Curates wine lists and guides guests through pairings."],
+    ["Retail Buyer","Selects and purchases products for a retail store's shelves."],
+    ["Store Owner","Runs the business end-to-end, from purchasing to customer experience."]
+  ]
+};
+const careerSections = document.getElementById('careerSections');
+Object.keys(careers).forEach((sector)=>{
+  const section = document.createElement('div');
+  section.className = 'sector-section';
+
+  const heading = document.createElement('h4');
+  heading.className = 'sector-heading';
+  heading.textContent = sector;
+  section.appendChild(heading);
+
+  const grid = document.createElement('div');
+  grid.className = 'grid';
+  careers[sector].forEach(([name,desc])=>{
+    grid.appendChild(makeFlipCard(name, desc));
+  });
+  section.appendChild(grid);
+  careerSections.appendChild(section);
+});
+
+// ---------------- Lesson 3: chain builder ----------------
+const chainSteps = ["Raw Materials","Production","Packaging","Distribution","Retail & Hospitality","Consumer Experience"];
+let chainShuffled = [...chainSteps].sort(()=>Math.random()-0.5);
+let chainNext = 0;
+const chainSlotsEl = document.getElementById('chainSlots');
+chainSteps.forEach((s,i)=>{
+  const slot = document.createElement('div');
+  slot.className='chain-slot';
+  slot.id = 'slot-'+i;
+  slot.innerHTML = `<span><span class="step-num">Step ${i+1}</span>?</span>`;
+  chainSlotsEl.appendChild(slot);
+});
+const chainPoolEl = document.getElementById('chainPool');
+// These two status regions receive focus programmatically below, so they
+// need to be focusable even though they aren't natural form controls.
+document.getElementById('chainStatus').setAttribute('tabindex','-1');
+document.getElementById('chainSuccess').setAttribute('tabindex','-1');
+chainShuffled.forEach(step=>{
+  const tile = document.createElement('button');
+  tile.type = 'button';
+  tile.className='chain-tile';
+  tile.textContent = step;
+  tile.addEventListener('click', ()=>{
+    const statusEl = document.getElementById('chainStatus');
+    const successEl = document.getElementById('chainSuccess');
+    if(step === chainSteps[chainNext]){
+      const slot = document.getElementById('slot-'+chainNext);
+      slot.classList.add('filled');
+      slot.innerHTML = `<span><span class="step-num">Step ${chainNext+1}</span>${step}</span>`;
+      chainNext++;
+      const finished = chainNext===chainSteps.length;
+      if(finished){ successEl.classList.add('show'); }
+      // This tile is about to be disabled and hidden (.chain-tile:disabled),
+      // and it currently has focus. Decide where focus should land BEFORE
+      // that happens — otherwise assistive tech announces this tile's own
+      // disabled/hidden state (e.g. "unavailable") instead of the status
+      // update, and focus falls back to <body>.
+      const nextTile = Array.from(chainPoolEl.querySelectorAll('.chain-tile')).find(t => t!==tile && !t.disabled);
+      const focusTarget = finished ? successEl : (nextTile || statusEl);
+      tile.disabled = true;
+      statusEl.textContent = finished ? 'Complete! 6 of 6 correct.' : (chainNext+' of 6 placed correctly.');
+      focusTarget.focus();
+    } else {
+      tile.classList.add('wrong');
+      // Clear and re-set on the next frame so a repeated wrong tile still
+      // produces an announceable change even when the count portion of the
+      // message happens to read the same as last time.
+      statusEl.textContent = '';
+      window.requestAnimationFrame(()=>{
+        statusEl.textContent = '"'+step+'" isn\'t the next step — try again. ('+chainNext+' of 6 placed correctly.)';
+      });
+      setTimeout(()=>tile.classList.remove('wrong'),350);
+    }
+  });
+  chainPoolEl.appendChild(tile);
+});
+
+// ---------------- Lesson 3: follow the product ----------------
+const journeys = {
+  "Wine": [
+    "Grapes are grown in a vineyard.",
+    "A winery crushes, ferments, and ages the wine.",
+    "A distributor (or a direct winery-to-retailer relationship, where permitted) moves cases to market.",
+    "A wine shop or restaurant sells or serves the bottle.",
+    "A guest enjoys a glass with dinner."
+  ],
+  "Beer": [
+    "Malted barley, hops, and water are sourced.",
+    "A brewery mashes, boils, ferments, and packages the beer.",
+    "A distributor's trucks deliver kegs and cases to accounts.",
+    "A bar taps a keg or a grocery store stocks the six-pack.",
+    "A customer orders a pint or grabs a case for a weekend cookout."
+  ],
+  "Spirits": [
+    "Grain, agave, sugarcane, or another base ingredient is harvested.",
+    "A distillery ferments, distills, and often barrel-ages the spirit.",
+    "A distributor places the bottles with licensed retailers and bars.",
+    "A liquor store shelves it, or a bartender builds a cocktail with it.",
+    "A customer buys a bottle as a gift or orders a cocktail at happy hour."
+  ],
+  "Bottled Water": [
+    "Water is sourced from a spring, aquifer, or municipal supply.",
+    "A bottling plant filters, treats, and packages the water.",
+    "Distributors and direct-store-delivery trucks move pallets to retailers.",
+    "A convenience store, gym, or vending machine stocks it.",
+    "A customer grabs a bottle on the way to a workout."
+  ],
+  "Coffee": [
+    "Coffee cherries are grown and harvested on farms, often overseas.",
+    "Beans are processed, roasted, and packaged by a roaster.",
+    "Distributors and importers move beans and products to retailers and foodservice accounts.",
+    "A café brews it to order, or a grocery store sells the bag.",
+    "A customer sips it at a coffee shop or brews it at home."
+  ]
+};
+// Builds one click-the-steps-in-order instance (slots + shuffled tile pool +
+// live status + success message), the same interaction pattern as "Build
+// the Supply Chain" above, generalized so it can run once per product
+// category instead of just once for the page. Steps here are full sentences
+// rather than one-word labels, so tiles/slots get the ".long" modifier
+// (see CSS) for readable wrapping instead of the short fixed-width look.
+function buildStepChain(steps, successText){
+  const holder = document.createElement('div');
+  holder.className = 'product-instance';
+
+  const slotsEl = document.createElement('div');
+  slotsEl.className = 'chain-slots';
+  steps.forEach((s,i)=>{
+    const slot = document.createElement('div');
+    slot.className = 'chain-slot long';
+    slot.innerHTML = `<span><span class="step-num">Step ${i+1}</span>?</span>`;
+    slotsEl.appendChild(slot);
+  });
+
+  const poolEl = document.createElement('div');
+  poolEl.className = 'chain-pool';
+
+  const statusEl = document.createElement('div');
+  statusEl.className = 'chain-status';
+  statusEl.setAttribute('aria-live','polite');
+  statusEl.setAttribute('role','status');
+  statusEl.setAttribute('tabindex','-1');
+  statusEl.textContent = '0 of ' + steps.length + ' placed correctly.';
+
+  const successEl = document.createElement('div');
+  successEl.className = 'chain-success';
+  successEl.setAttribute('aria-live','polite');
+  successEl.setAttribute('role','status');
+  successEl.setAttribute('tabindex','-1');
+  successEl.innerHTML = '<span aria-hidden="true">🎉</span> <b>Nice work!</b> ' + successText;
+
+  holder.appendChild(slotsEl);
+  holder.appendChild(poolEl);
+  holder.appendChild(statusEl);
+  holder.appendChild(successEl);
+
+  let next = 0;
+  const shuffled = [...steps].sort(()=>Math.random()-0.5);
+  shuffled.forEach(step=>{
+    const tile = document.createElement('button');
+    tile.type = 'button';
+    tile.className = 'chain-tile long';
+    tile.textContent = step;
+    tile.addEventListener('click', ()=>{
+      if(step === steps[next]){
+        const slot = slotsEl.children[next];
+        slot.classList.add('filled');
+        slot.innerHTML = `<span><span class="step-num">Step ${next+1}</span>${step}</span>`;
+        next++;
+        const finished = next === steps.length;
+        if(finished) successEl.classList.add('show');
+        // Same focus-before-disable pattern as Build the Supply Chain: this
+        // tile is about to vanish, so decide where focus goes next before
+        // that happens rather than losing it to <body>.
+        const nextTile = Array.from(poolEl.querySelectorAll('.chain-tile')).find(t => t!==tile && !t.disabled);
+        const focusTarget = finished ? successEl : (nextTile || statusEl);
+        tile.disabled = true;
+        statusEl.textContent = finished ? ('Complete! '+steps.length+' of '+steps.length+' correct.') : (next+' of '+steps.length+' placed correctly.');
+        focusTarget.focus();
+      } else {
+        tile.classList.add('wrong');
+        statusEl.textContent = '';
+        window.requestAnimationFrame(()=>{
+          statusEl.textContent = 'That\'s not the next step — try again. ('+next+' of '+steps.length+' placed correctly.)';
+        });
+        setTimeout(()=>tile.classList.remove('wrong'),350);
+      }
+    });
+    poolEl.appendChild(tile);
+  });
+
+  return holder;
+}
+
+const productSections = document.getElementById('productSections');
+Object.keys(journeys).forEach((cat)=>{
+  const section = document.createElement('div');
+  section.className = 'sector-section';
+
+  const heading = document.createElement('h4');
+  heading.className = 'sector-heading';
+  heading.textContent = cat;
+  section.appendChild(heading);
+
+  const successText = 'That\'s ' + cat + '\'s full journey, start to finish.';
+  section.appendChild(buildStepChain(journeys[cat], successText));
+  productSections.appendChild(section);
+});
+
+// ---------------- Lesson 4: trend cards ----------------
+const trends = [
+  ["Craft Beverage Growth","Small, independent producers — craft breweries, boutique wineries, micro-distilleries — build loyal followings through local roots, unique recipes, and storytelling big brands struggle to replicate."],
+  ["Premiumization","Many consumers are drinking less but spending more per occasion, trading up to higher-quality, higher-priced products rather than buying in bulk."],
+  ["RTDs","Canned cocktails, hard seltzers, and bottled coffee drinks deliver convenience without sacrificing flavor — a category producers are racing to expand."],
+  ["Non-Alcoholic Options","Zero-proof beers, wines, and spirits are moving from niche to mainstream as consumers look for sophisticated options that fit moderation or lifestyle choices."],
+  ["Sustainability","From lightweight packaging to water conservation, sustainability has become both a purchasing factor for consumers and an efficiency factor for producers and distributors."]
+];
+const trendGrid = document.getElementById('trendGrid');
+trends.forEach(([name,desc])=>{
+  trendGrid.appendChild(makeFlipCard(name, desc));
+});
+
+// ---------------- Quiz checker ----------------
+function setQuizFeedbackText(fb, text){
+  // Clear first, then set on the next frame. If a student checks the same
+  // (still-wrong) answer twice in a row the message text would otherwise be
+  // identical to what's already in this aria-live region, and most screen
+  // readers won't re-announce a live region whose content didn't change.
+  fb.textContent = '';
+  window.requestAnimationFrame(()=>{ fb.textContent = text; });
+}
+
+function renderQuizFeedback(quiz, selectedValue){
+  const answer = quiz.dataset.answer;
+  const fb = quiz.querySelector('.quiz-feedback');
+  fb.classList.remove('correct','incorrect');
+  if(!selectedValue) return;
+  if(selectedValue === answer){
+    setQuizFeedbackText(fb, '✓ Correct!');
+    fb.classList.add('correct');
+  } else {
+    setQuizFeedbackText(fb, '✗ Not quite — try again.');
+    fb.classList.add('incorrect');
+  }
+  fb.setAttribute('tabindex','-1');
+  fb.focus();
+}
+
+function checkQuiz(btn){
+  const quiz = btn.closest('.quiz');
+  const name = quiz.querySelector('input[type=radio]').name;
+  const selected = quiz.querySelector(`input[name=${name}]:checked`);
+  const fb = quiz.querySelector('.quiz-feedback');
+  if(!selected){
+    fb.classList.remove('correct','incorrect');
+    setQuizFeedbackText(fb, 'Choose an answer first.');
+    fb.classList.add('incorrect');
+    fb.style.display='block';
+    fb.setAttribute('tabindex','-1');
+    fb.focus();
+    return;
+  }
+  state.quizAnswers[name] = selected.value;
+  saveState();
+  renderQuizFeedback(quiz, selected.value);
+}
+
+// ---------------- Journal persistence ----------------
+['journal-l2','journal-l4','journal-final'].forEach(id=>{
+  const el = document.getElementById(id);
+  if(el){
+    el.addEventListener('input', ()=>{
+      state.journals[id] = el.value;
+      saveState();
+    });
+  }
+});
+
+// ---------------- Completion code ----------------
+const CODE_SALT = 'BEV130-M1-GLCI-2026';
+
+// Small, deterministic (non-cryptographic) string hash — same name always
+// produces the same code, so the code stays stable across reloads/days.
+function hashString(str){
+  let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+  for(let i=0;i<str.length;i++){
+    const ch = str.charCodeAt(i);
+    h1 = Math.imul(h1 ^ ch, 2654435761);
+    h2 = Math.imul(h2 ^ ch, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1>>>16), 2246822507) ^ Math.imul(h2 ^ (h2>>>13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2>>>16), 2246822507) ^ Math.imul(h1 ^ (h1>>>13), 3266489909);
+  return 4294967296 * (2097151 & h2) + (h1>>>0);
+}
+
+function updateCompletionUI(){
+  const doneCount = Object.values(state.doneState).filter(Boolean).length;
+  const countEl = document.getElementById('completionLessonCount');
+  if(countEl) countEl.textContent = doneCount+' / 4';
+  const btn = document.getElementById('generateCodeBtn');
+  // Intentionally NOT using the native `disabled` attribute here. A disabled
+  // button is pulled out of the tab order entirely, so a keyboard user
+  // tabbing out of the name field above would jump straight past it to
+  // "Reset my progress on this device" with no indication the button even
+  // exists — and, since .quiz-btn has no distinct disabled styling, a mouse
+  // user sees what looks like a normal, clickable button that silently does
+  // nothing. Keeping the button focusable/clickable and explaining *why* it
+  // isn't ready yet (via clearCompletionMessage/showCompletionMessage below)
+  // fixes both problems at once.
+  if(btn){
+    const locked = doneCount < 4;
+    btn.classList.toggle('is-locked', locked);
+    btn.setAttribute('aria-disabled', locked ? 'true' : 'false');
+    if(!locked) clearCompletionMessage();
+  }
+  if(state.completionCode) showCode(state.completionCode);
+}
+
+function showCompletionMessage(text){
+  const msg = document.getElementById('completionMessage');
+  if(!msg) return;
+  msg.textContent = '';
+  msg.classList.remove('show','locked');
+  window.requestAnimationFrame(()=>{
+    msg.textContent = text;
+    msg.classList.add('show','locked');
+  });
+}
+
+function clearCompletionMessage(){
+  const msg = document.getElementById('completionMessage');
+  if(!msg) return;
+  msg.textContent = '';
+  msg.classList.remove('show','locked');
+}
+
+function generateCode(){
+  const doneCount = Object.values(state.doneState).filter(Boolean).length;
+  if(doneCount < 4){
+    showCompletionMessage('Complete all 4 lessons before generating your completion code. Lessons complete: '+doneCount+' / 4.');
+    return;
+  }
+  const nameInput = document.getElementById('studentName');
+  const name = (nameInput.value || '').trim();
+  if(!name){
+    nameInput.style.borderColor = 'var(--red)';
+    showCompletionMessage('Enter your name above, then select Generate My Completion Code again.');
+    nameInput.focus();
+    return;
+  }
+  nameInput.style.borderColor = '';
+  clearCompletionMessage();
+  state.studentName = name;
+  if(!state.completionCode){
+    const raw = hashString(name.toLowerCase()+'|'+CODE_SALT).toString(36).toUpperCase();
+    const padded = raw.padStart(10,'0').slice(0,10);
+    state.completionCode = 'BEV1-'+padded.slice(0,5)+'-'+padded.slice(5,10);
+  }
+  saveState();
+  showCode(state.completionCode);
+}
+
+function showCode(code){
+  const wrapEl = document.getElementById('codeDisplay');
+  const valEl = document.getElementById('codeValue');
+  if(!wrapEl || !valEl) return;
+  valEl.textContent = code;
+  wrapEl.style.display = 'block';
+}
+
+function copyCode(){
+  const code = document.getElementById('codeValue').textContent;
+  if(!code) return;
+  const finish = ()=>{
+    const c = document.getElementById('copyConfirm');
+    if(!c) return;
+    c.style.display='inline';
+    setTimeout(()=>{ c.style.display='none'; }, 1800);
+  };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(code).then(finish).catch(finish);
+  } else {
+    finish();
+  }
+}
+
+function resetProgress(){
+  if(!confirm('This will clear all saved progress on this device — lessons, quiz answers, journal text, and your completion code. Continue?')) return;
+  try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+  location.reload();
+}
+
+// ---------------- Restore saved state on load ----------------
+function restoreUI(){
+  loadState();
+
+  Object.keys(state.doneState).forEach(id=>{
+    if(state.doneState[id]){
+      const btn = document.getElementById('btn-complete-'+id);
+      const check = document.getElementById('check-'+id);
+      const srCheck = document.getElementById('check-'+id+'-sr');
+      if(btn){ btn.textContent = '✓ Lesson Complete'; btn.classList.add('done'); }
+      if(check) check.classList.add('done');
+      if(srCheck) srCheck.textContent = ' — completed';
+    }
+  });
+  const doneCount = Object.values(state.doneState).filter(Boolean).length;
+  document.getElementById('lessonsDoneLabel').textContent = doneCount+' / 4';
+  document.getElementById('wrapDoneLabel').textContent = doneCount+' / 4';
+  document.getElementById('progressFill').style.width = (doneCount/4*100)+'%';
+  const track = document.getElementById('progressTrack');
+  if(track) track.setAttribute('aria-valuenow', String(doneCount));
+
+  Object.keys(state.quizAnswers).forEach(name=>{
+    const value = state.quizAnswers[name];
+    const input = document.querySelector(`input[name="${name}"][value="${value}"]`);
+    if(input){
+      input.checked = true;
+      renderQuizFeedback(input.closest('.quiz'), value);
+    }
+  });
+
+  Object.keys(state.journals).forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.value = state.journals[id];
+  });
+
+  if(state.studentName){
+    const nameInput = document.getElementById('studentName');
+    if(nameInput) nameInput.value = state.studentName;
+  }
+
+  updateCompletionUI();
+}
+restoreUI();
+</script>
+</body>
+</html>
